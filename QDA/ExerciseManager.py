@@ -38,6 +38,7 @@ class ExerciseManager
 
 	
 
+
 	def biasedFlip(p):
 		return True if random.random() < p else False
 
