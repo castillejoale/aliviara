@@ -1,4 +1,3 @@
-
 int thumb = A1;
 int index = A2;
 int middle = A3;
