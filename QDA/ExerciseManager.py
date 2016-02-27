@@ -25,10 +25,18 @@ class ExerciseManager
 		while len(program) < amtExercise:
 			index = random.randrange(0, size)
 			exercise = self.exercises[exercise]
+			exercise.insert(0,0)
 			rating = self.QDA.predict(exercise)
 			if rating == 1:
 				program.append(exercise)
-			elif intensityLvl != 0:
+			else:
+				flip = biasedFlip(p)
+				if flip:
+					exercise[0] = 1
+					program.append[exercise]
+		return program
+
+	
 
 	def biasedFlip(p):
 		return True if random.random() < p else False
