@@ -1,0 +1,179 @@
+Glove Data: Opening and Closing Fist Tasks
+     -> Higher Values correspond to more flex/bend
+     -> Lower Values correspond to straight fingers
+
+=============================
+Thumb Flex Value: 599
+Index Flex Value: 533
+Middle Flex Value: 532
+Ring Flex Value: 571
+Pinky Flex Value: 560
+=============================
+
+=============================
+Thumb Flex Value: 572
+Index Flex Value: 503
+Middle Flex Value: 481
+Ring Flex Value: 518
+Pinky Flex Value: 541
+=============================
+
+=============================
+Thumb Flex Value: 578
+Index Flex Value: 485
+Middle Flex Value: 464
+Ring Flex Value: 512
+Pinky Flex Value: 521
+=============================
+
+=============================
+Thumb Flex Value: 574
+Index Flex Value: 532
+Middle Flex Value: 540
+Ring Flex Value: 594
+Pinky Flex Value: 561
+=============================
+
+=============================
+Thumb Flex Value: 630
+Index Flex Value: 705
+Middle Flex Value: 705
+Ring Flex Value: 725
+Pinky Flex Value: 718
+=============================
+
+=============================
+Thumb Flex Value: 694
+Index Flex Value: 712
+Middle Flex Value: 710
+Ring Flex Value: 740
+Pinky Flex Value: 741
+=============================
+
+=============================
+Thumb Flex Value: 689
+Index Flex Value: 705
+Middle Flex Value: 703
+Ring Flex Value: 737
+Pinky Flex Value: 738
+=============================
+
+=============================
+Thumb Flex Value: 684
+Index Flex Value: 702
+Middle Flex Value: 700
+Ring Flex Value: 733
+Pinky Flex Value: 736
+=============================
+
+=============================
+Thumb Flex Value: 598
+Index Flex Value: 629
+Middle Flex Value: 643
+Ring Flex Value: 683
+Pinky Flex Value: 674
+=============================
+
+=============================
+Thumb Flex Value: 578
+Index Flex Value: 480
+Middle Flex Value: 539
+Ring Flex Value: 510
+Pinky Flex Value: 534
+=============================
+
+=============================
+Thumb Flex Value: 575
+Index Flex Value: 480
+Middle Flex Value: 534
+Ring Flex Value: 508
+Pinky Flex Value: 522
+=============================
+
+=============================
+Thumb Flex Value: 577
+Index Flex Value: 664
+Middle Flex Value: 683
+Ring Flex Value: 684
+Pinky Flex Value: 624
+=============================
+
+=============================
+Thumb Flex Value: 682
+Index Flex Value: 696
+Middle Flex Value: 699
+Ring Flex Value: 731
+Pinky Flex Value: 729
+=============================
+
+=============================
+Thumb Flex Value: 675
+Index Flex Value: 683
+Middle Flex Value: 694
+Ring Flex Value: 723
+Pinky Flex Value: 725
+=============================
+
+=============================
+Thumb Flex Value: 670
+Index Flex Value: 678
+Middle Flex Value: 691
+Ring Flex Value: 720
+Pinky Flex Value: 727
+=============================
+
+=============================
+Thumb Flex Value: 667
+Index Flex Value: 679
+Middle Flex Value: 689
+Ring Flex Value: 718
+Pinky Flex Value: 723
+=============================
+
+=============================
+Thumb Flex Value: 662
+Index Flex Value: 698
+Middle Flex Value: 687
+Ring Flex Value: 716
+Pinky Flex Value: 718
+=============================
+
+=============================
+Thumb Flex Value: 658
+Index Flex Value: 694
+Middle Flex Value: 676
+Ring Flex Value: 705
+Pinky Flex Value: 681
+=============================
+
+=============================
+Thumb Flex Value: 583
+Index Flex Value: 541
+Middle Flex Value: 563
+Ring Flex Value: 595
+Pinky Flex Value: 595
+=============================
+
+=============================
+Thumb Flex Value: 577
+Index Flex Value: 532
+Middle Flex Value: 555
+Ring Flex Value: 566
+Pinky Flex Value: 579
+=============================
+
+=============================
+Thumb Flex Value: 578
+Index Flex Value: 538
+Middle Flex Value: 558
+Ring Flex Value: 581
+Pinky Flex Value: 589
+=============================
+
+=============================
+Thumb Flex Value: 582
+Index Flex Value: 540
+Middle Flex Value: 560
+Ring Flex Value: 587
+Pinky Flex Value: 596
+=============================
