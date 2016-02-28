@@ -9,11 +9,16 @@ def hello():
 @app.route('/data', methods=['POST'])
 def data():
     params = request.form
-    print params.keys()
+    exercise = params['exercise']
     fingers = params.getlist('fingers')
-    pressure =  params['pressure']
-    print fingers
-    print pressure
+    time = params['time']
+    success = params['success']
+    pain = params['pain']
+    print "Exercise: " + str(exercise)
+    print "Fingers: " + str(fingers)
+    print "Time: " + str(time)
+    print "Success: " + str(success)
+    print "Pain: " + str(pain)
     return jsonify(result={"status": 200})
 
 if __name__ == '__main__':
