@@ -8,7 +8,10 @@ import numpy as np
 import scipy as sp
 import pandas as pd
 import PerformanceAnalysis
+<<<<<<< HEAD
 
+=======
+>>>>>>> b86ecd3c71b4ba2455ef2a6243e96360f1fe465b
 import pdb
 
 
@@ -79,10 +82,16 @@ def data():
     print "Pain: " + str(pain)
     print 'about to add'
     add_to_dbase("success,time,exercise",[[success, time, exercise]], 'performanceStats.csv')
+<<<<<<< HEAD
     pAnalyst.checkOnPatient(exercise)
     print 'patient checked'
     pdb.set_trace()
     prog()
+=======
+ #   pAnalyst.checkOnPatient(exercise)
+   # pdb.set_trace()
+
+>>>>>>> b86ecd3c71b4ba2455ef2a6243e96360f1fe465b
     processCData(pain, fingers)
 
 # @app.route('/designExercise', methods=['POST']):
