@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import instructions
+import os.path
 
 # Handling Data
 import numpy as np
@@ -13,7 +14,7 @@ import matplotlib.pyplot as plt
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
-
+import pdb
 
 
 app = Flask(__name__)
@@ -35,15 +36,6 @@ def check_cols(df):
             df = df.drop(c, axis=1)
     return df
 
-def add_to_dbase(pain, succ, time, ex):
-    dbase = check_cols(pd.read_csv('dbase.csv'))
-    t, s, p, e = list(dbase['time'].values), list(dbase['success'].values), list(dbase['pain'].values), list(dbase['ex'].values)
-    # t.append(float(time))    
-    # s.append(int(succ))
-    # p.append(float(pain))
-    # e.append(int(ex))
-    dbase.ix[len(t)] = [int(pain), int(succ), float(time), int(ex)]
-    dbase.to_csv('dbase.csv')
 
 def write_email():
     fromaddr = "alivaria420@gmail.com"
@@ -71,7 +63,7 @@ def write_email():
 
 
 def is_consis_fail(e):
-    db = check_cols(pd.read_csv('dbase.csv'))
+    db = check_cols(pd.read_csv('performanceStats.csv'))
     if float(e) not in db.ex.values:
         print 'returning false'
         return False
@@ -98,7 +90,7 @@ def prog():
     12: 'Pinky-Thumb Touch'}
 
 
-    calib, dbase = check_cols(pd.read_csv('dummy_calibration.csv')), check_cols(pd.read_csv('dbase.csv'))
+    calib, dbase = check_cols(pd.read_csv('dummy_calibration.csv')), check_cols(pd.read_csv('performanceStats.csv'))
     mu, sig = np.mean(calib['time']), np.std(calib['time'])
     thresh = mu + (2 * sig)
     f, axarr = plt.subplots(nrows=5, ncols=3)
@@ -144,6 +136,32 @@ def prog():
 def add_to_all(pain, fing, ex, succ):
     return False
 
+def processCData(pain, fingers):
+    i = 0
+    data = []
+    pain = [int(d) for d in str(pain).strip('[]') if d != "," and d != ' ']
+    for measure in fingers:
+        measure = str(measure).strip('[]')
+        measure = [int(d) for d in measure if d != "," and d != ' ']
+        measure.append(int(pain[i]))
+        data.append(measure)
+        i += 1
+    add_to_dbase('finger1,finger2,finger3,finger4,finger5,pain' ,data, 'classificationData.csv')
+
+
+
+
+def add_to_dbase(columns, data, filename):
+    if os.path.isfile(filename):
+        f = open(filename, 'a')
+    else:
+        f = open(filename, 'w')
+        f.write(columns+"\n")
+    for datum in data:
+        row = [int(d) for d in datum]
+        row = str(row).strip('[]') + "\n"
+        f.write(row)
+
 
 @app.route('/data', methods=['POST'])
 def data():
@@ -159,7 +177,15 @@ def data():
     print "Success: " + str(success)
     print "Pain: " + str(pain)
     print 'about to add'
-    add_to_dbase(pain, success, time, exercise)
+    add_to_dbase("pain,success,time,exercise",[[pain[1], success, time, exercise]], 'performanceStats.csv')
+    pdb.set_trace()
+    prog()
+    processCData(pain, fingers)
+
+# @app.route('/designExercise', methods=['POST']):
+# def sendExercise()
+
+
     # if is_consis_fail(exercise):
     #     write_email()
     # prog()

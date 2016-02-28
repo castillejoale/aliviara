@@ -21,3 +21,4 @@ class QDAFromSleepy(QDAClassifier):
 		params = [float(x) for x in reader.next()]
 		priors = (param[0], param[1])
 		means = (param[2],param[3])
+		return priors, means
