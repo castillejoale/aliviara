@@ -16,7 +16,7 @@ class FlaskTestCase(unittest.TestCase):
         ]
         print fingers_data
         response = tester.post('/data', data=dict(
-            exercise = "jerk",
+            exercise = "ex1",
             fingers = fingers_data, 
             time = 666,
             success = 1,
