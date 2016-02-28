@@ -8,6 +8,7 @@ import scipy as sp
 import pandas as pd
 import PerformanceAnalysis
 import pdb
+from QDA import ExerciseManager
 
 # Plotting Package
 import matplotlib.pyplot as plt
@@ -20,6 +21,10 @@ from email.MIMEImage import MIMEImage
 
 
 app = Flask(__name__)
+    
+pAnalyst = PerformanceAnalysis.PerformanceAnalysis()
+cols = ['pain', 'success', 'time', 'ex']
+
 
 
 @app.route('/')
@@ -28,6 +33,7 @@ def hello():
 
 
 # Generate Plot
+
 
 
 #### Dino Funcs ####
@@ -42,12 +48,10 @@ def check_cols(df):
 
 def add_to_dbase_dino(succ, time, ex):
     if not os.path.isfile('dbase.csv'):
-        print 'starting'
         dbase = pd.DataFrame()
         cols = ['success', 'time', 'ex']
         for col in cols:
             dbase[col] = [0.0]
-        print 'made it'
     else:
         dbase = check_cols(pd.read_csv('dbase.csv'))
     t, s, e = list(dbase['time'].values), list(dbase['success'].values), list(dbase['ex'].values)
@@ -142,23 +146,25 @@ def plot_prog():
         axarr[r, c].set_yticklabels([])
     f.subplots_adjust(hspace=.75)
     plt.savefig('ex_progress.jpg')
-    return False
+# all_dat = pd.DataFram()
+# columns = 
+# for col in columns:
+#     dbase[col] = [0.0]
+
+
 ###########
 
 def processCData(pain, fingers):
     i = 0
     data = []
-    pain = [int(d) for d in str(pain).strip('[]') if d != "," and d != ' ']
+    pain = int(pain)
     for measure in fingers:
         measure = str(measure).strip('[]')
         measure = [int(d) for d in measure if d != "," and d != ' ']
-        measure.append(int(pain[i]))
+        measure.append(int(pain))
         data.append(measure)
         i += 1
-    print 'here'
     add_to_dbase('finger1,finger2,finger3,finger4,finger5,pain', data, 'classificationData.csv')
-
-
 
 
 def add_to_dbase(columns, data, filename):
@@ -187,16 +193,9 @@ def data():
     print "Time: " + str(time)
     print "Success: " + str(success)
     print "Pain: " + str(pain)
-    # add_to
-    # add_to_dbase("success,time,exercise",[[success, time, exercise]], 'performanceStats.csv')
-    
-    # what i need -dino
     add_to_dbase_dino(success, time, exercise)
     if is_consis_fail(exercise):
         write_email(exercise)
-    #dbase = check_cols(pd.read_csv('dbase.csv'))
-    #p_check = ProgressChecker(exercise)
-    # print dbase.values
 
     ###########################
 
@@ -204,9 +203,13 @@ def data():
  #   pAnalyst.checkOnPatient(exercise)
    # pdb.set_trace()
     processCData(pain, fingers)
+    return jsonify(result={"status":200})
 
-# @app.route('/designExercise', methods=['POST']):
-# def sendExercise()
+
+@app.route('/plan')
+def sendExercise():
+    if not trainor.ready:
+        return jsonify([])
     return jsonify(result={"status": 200})
 
 
@@ -216,7 +219,7 @@ def get_image():
     #    filename = 'ok.gif'
     # else:
     #    filename = 'error.gif'
-
+    plot_prog()
     return send_file('ex_progress.jpg', mimetype='image/jpg')
 
 

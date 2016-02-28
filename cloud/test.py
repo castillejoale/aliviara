@@ -18,13 +18,12 @@ class FlaskTestCase(unittest.TestCase):
             [3,4,5,6,7]
         ]
         print fingers_data
-        painTimeline = [[1,0,0,1]]
         response = tester.post('/data', data=dict(
             exercise = 0,
             fingers = fingers_data, 
             time = 666,
             success = 0,
-            pain = painTimeline
+            pain = 1
             ), follow_redirects=True);
         self.assertEqual(response.status_code, 200)
         assert json.loads(response.data)
@@ -38,7 +37,6 @@ class FlaskTestCase(unittest.TestCase):
             [2,3,4,5,6],
             [3,4,5,6,7]
         ]
-        painTimeline = [[1,0,0,1]]
         response = tester.post('/data', data=dict(
             exercise = 0,
             fingers = fingers_data, 

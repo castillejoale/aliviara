@@ -1,2 +1,4 @@
-from cloud import PerfomanceAnalysis
+from QDA import QDAClassifier
+from QDA import ExerciseManager
+
 
