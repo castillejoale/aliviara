@@ -37,26 +37,20 @@ def check_cols(df):
 def add_to_dbase(pain, succ, time, ex):
     dbase = check_cols(pd.read_csv('dbase.csv'))
     t, s, p, e = list(dbase['time'].values), list(dbase['success'].values), list(dbase['pain'].values), list(dbase['ex'].values)
-    # t.append(float(time))    
-    # s.append(int(succ))
-    # p.append(float(pain))
-    # e.append(int(ex))
     dbase.ix[len(t)] = [int(pain), int(succ), float(time), int(ex)]
     dbase.to_csv('dbase.csv')
 
 def write_email(e):
-    fromaddr = "alivaria420@gmail.com"
+    fromaddr = "aliviara420@gmail.com"
     toaddr = "leonardinodigma@gmail.com"
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
-    msg['Subject'] = "alivaria"
-    print "about to open"
+    msg['Subject'] = "aliviara - patient update"
     with open('instructs/ex%s.txt' % (e), 'r') as myfile:
         instr=myfile.read().replace('\n', '   ')
-    print "loaded: " + instr
     body = "\
-    Hello: \n\n We have been recording performance on hand exercises from Chance the Rapper. The data is suggesting that their performance on some exercises is degrading, which may be early signs of Rheumatoid Arthritis. \n\n The exercises that Chance is failing to complete at the standard of healthy controls is Exercise %s. The instructions for these tasks can be viewed below. \n \
+    Hello: \n\n We have been recording performance on hand exercises from Chance the Rapper. The data is suggesting that their performance on some exercises is degrading, which may be early signs of Rheumatoid Arthritis. \n\n The exercises that Chance is failing to complete at the standard of healthy controls is Exercise %s. The instructions for these tasks can be viewed below and a schematic of the exercise is attached to this message. \n \
     \n \
     \n \
     %s \
@@ -64,7 +58,7 @@ def write_email(e):
     \n \
     \n \
     Best,\n \
-    The Alivaria Team \n \n \n \
+    The Aliviara Team \n \n \n \
     " % (e, instr) 
     msg.attach(MIMEText(body, 'plain'))
     msg.attach(MIMEImage(file("final_figs/ex%s.jpg" % (str(e))).read()))
