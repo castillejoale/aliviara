@@ -9,17 +9,14 @@ import csv
 import pdb
 
 class QDAClassifier:
-	def __init__(self, data, labels, fileWake ):
+	def __init__(self, data, labels, samples):
 		self.data = data
 		self.labels = labels
 		self.samples = samples
 		self.fileWake = fileWake
-		if self.fileWake:
-			
-		else:
-			means = (0,0)
-			priors = (0,0)
-			covars = (0,0) 
+		means = (0,0)
+		priors = (0,0)
+		covars = (0,0) 
 		self.classifier = QuadraticDiscriminantAnalysis(self.priors)
 		self.usedData = set()
 		self.ready = False
@@ -196,11 +193,16 @@ class QDAClassifier:
 		invCovar = np.linalg.inv(covar)
 		(sample - mean).T*invCovar*(sample-mean) 
 
+
+
+
+print(row['first_name'], row['last_name'])
+
 	def saveDecisionBoundary(self):
 		"""
 		Modify for user discrimination later
 		"""
-		f = open("userDistribution.txt", 'w')
+		f = open("userDistribution.csv", 'w')
 		f.write('meanPain,meanNoPain,priorPain,priorNoPain\n')
 		f.write(str(self.meanPain)+','+str(self.meanNoPain)+','+str(self.priorPain)+','+str(self.priorNoPain))
 		np.save("userDistributionCovPain", self.covars[0])
