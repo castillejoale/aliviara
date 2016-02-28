@@ -29,9 +29,7 @@ def data():
     return jsonify(result={"status": 200})
 
 def add_to_dbase(ex, fingers, time, success, pain):
-    for ind in range(len(fingers)):
-        cols[]
-
+    print 'yoyoyo'
 
 if __name__ == '__main__':
     app.run()
