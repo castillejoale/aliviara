@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_file
 import instructions
-
+import os.path
 # Handling Data
 import numpy as np
 import scipy as sp
@@ -8,6 +8,7 @@ import pandas as pd
 
 # Plotting Package
 import matplotlib.pyplot as plt
+
 
 # Emailing packages
 import smtplib
@@ -34,11 +35,11 @@ def check_cols(df):
             df = df.drop(c, axis=1)
     return df
 
-def add_to_dbase(pain, succ, time, ex):
-    dbase = check_cols(pd.read_csv('dbase.csv'))
-    t, s, p, e = list(dbase['time'].values), list(dbase['success'].values), list(dbase['pain'].values), list(dbase['ex'].values)
-    dbase.ix[len(t)] = [int(pain), int(succ), float(time), int(ex)]
-    dbase.to_csv('dbase.csv')
+# def add_to_dbase(pain, succ, time, ex):
+#     dbase = check_cols(pd.read_csv('dbase.csv'))
+#     t, s, p, e = list(dbase['time'].values), list(dbase['success'].values), list(dbase['pain'].values), list(dbase['ex'].values)
+#     dbase.ix[len(t)] = [int(pain), int(succ), float(time), int(ex)]
+#     dbase.to_csv('dbase.csv')
 
 def write_email(e):
     fromaddr = "aliviara420@gmail.com"
@@ -72,10 +73,13 @@ def write_email(e):
 
 
 def is_consis_fail(e):
-    db = check_cols(pd.read_csv('dbase.csv'))
-    if float(e) not in db.ex.values:
+    db = check_cols(pd.read_csv('performanceStats.csv'))
+    print 'finding consistency'
+    ex_vals = db.exercise.values
+    print ex_vals
+    if e not in db.exercise.values:
         return False
-    exer = db[db.ex == float(e)]
+    exer = db[db.exercise == e]
     if len(exer) < 3:
         return False
     succs = exer['success'].values
@@ -97,10 +101,10 @@ def plot_prog():
     thresh = mu + (2 * sig)
     f, axarr = plt.subplots(nrows=5, ncols=3)
     for ind in range(15):
-        ex_dat = dbase[dbase.ex == ind]
+        ex_dat = dbase[dbase.exercise == ind]
         time_dat = ex_dat['time'].values
         mu_time = np.mean(time_dat)
-        calib_time = calib[calib.ex == ind]['time']
+        calib_time = calib[calib.exercise == ind]['time']
         r, c = ind / 3, ind % 3
         if ind == 13:
             axarr[r, c].set_xlabel('Trial')
@@ -131,6 +135,32 @@ def plot_prog():
     return False
 
 
+def processCData(pain, fingers):
+    i = 0
+    data = []
+    pain = [int(d) for d in str(pain).strip('[]') if d != "," and d != ' ']
+    for measure in fingers:
+        measure = str(measure).strip('[]')
+        measure = [int(d) for d in measure if d != "," and d != ' ']
+        measure.append(int(pain[i]))
+        data.append(measure)
+        i += 1
+    add_to_dbase('finger1,finger2,finger3,finger4,finger5,pain' ,data, 'classificationData.csv')
+
+
+def add_to_dbase(columns, data, filename):
+    print 'here'
+    if os.path.isfile(filename):
+        f = open(filename, 'a')
+    else:
+        f = open(filename, 'w')
+        f.write(columns+"\n")
+    for datum in data:
+        row = [int(d) for d in datum]
+        row = str(row).strip('[]') + "\n"
+        f.write(row)
+
+
 @app.route('/data', methods=['POST'])
 def data():
     params = request.form
@@ -144,15 +174,19 @@ def data():
     print "Time: " + str(time)
     print "Success: " + str(success)
     print "Pain: " + str(pain)
-    add_to_dbase(pain, success, time, exercise)
+    print 'about to add'
+    add_to_dbase("pain,success,time,exercise",[[pain, success, time, exercise]], 'performanceStats.csv')
+    print 'added'
+    # pdb.set_trace()
     if is_consis_fail(exercise):
+        print 'consistent failure'
         write_email(exercise)
-    # Only if 
     plot_prog()
-    return jsonify(result={"status": 200})
+    print 'plotted'
+    processCData(pain, fingers)
 
 
-@app.route('/get_image')
+@app.route('/get_image', methods=['GET'])
 def get_image():
     # if request.args.get('type') == '1':
     #    filename = 'ok.gif'
