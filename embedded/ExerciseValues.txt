@@ -1,0 +1,126 @@
++=====================+
+|        Ex. 0        |
++=====================+
+Desired Thumb Val = 77
+Desired Index Val = 79
+Desired Middle Val = 74
+Desired Ring Val = 79
+Desired Pinky Val = 77
+
+
++=====================+
+|        Ex. 1        |
++=====================+
+Desired Thumb Val = 17
+Desired Index Val = 3
+Desired Middle Val = 5
+Desired Ring Val = 5
+Desired Pinky Val = 7
+
+
++=====================+
+|        Ex. 2        |
++=====================+
+Desired Thumb Val = 89
+Desired Index Val = 85
+Desired Middle Val = 85
+Desired Ring Val = 83
+Desired Pinky Val = 69
+
+
++=====================+
+|        Ex. 3        |
++=====================+
+Desired Thumb Val = 49
+Desired Index Val = 53
+Desired Middle Val = 49
+Desired Ring Val = 53
+Desired Pinky Val = 57
+
+
++=====================+
+|        Ex. 4        |
++=====================+
+Desired Thumb Val = 23
+Desired Index Val = 7
+Desired Middle Val = 20
+Desired Ring Val = 20
+Desired Pinky Val = 17
+
+
++=====================+
+|        Ex. 5        |
++=====================+
+Desired Thumb Val = 23
+Desired Index Val = 30
+Desired Middle Val = 9
+Desired Ring Val = 22
+Desired Pinky Val = 22
+
+
++=====================+
+|        Ex. 6        |
++=====================+
+Desired Thumb Val = 25
+Desired Index Val =33
+Desired Middle Val = 25
+Desired Ring Val = 8
+Desired Pinky Val = 20
+
+
++=====================+
+|        Ex. 7        |
++=====================+
+Desired Thumb Val = 25
+Desired Index Val = 31
+Desired Middle Val = 25
+Desired Ring Val = 30
+Desired Pinky Val = 3
+
+
++=====================+
+|        Ex. 8        |
++=====================+
+Desired Thumb Val = 79
+Desired Index Val = 6
+Desired Middle Val = 6
+Desired Ring Val = 4
+Desired Pinky Val = 4
+
+
++=====================+
+|        Ex. 9        |
++=====================+
+Desired Thumb Val = 72
+Desired Index Val = 75
+Desired Middle Val = 8
+Desired Ring Val = 5
+Desired Pinky Val = 9
+
+
++=====================+
+|        Ex. 10       |
++=====================+
+Desired Thumb Val = 65
+Desired Index Val = 8
+Desired Middle Val = 65
+Desired Ring Val = 9
+Desired Pinky Val = 4
+
++=====================+
+|        Ex. 11       |
++=====================+
+Desired Thumb Val = 66
+Desired Index Val = 6
+Desired Middle Val = 7
+Desired Ring Val = 70
+Desired Pinky Val = 7
+
++=====================+
+|        Ex. 12       |
++=====================+
+Desired Thumb Val = 54
+Desired Index Val = 9
+Desired Middle Val = 7
+Desired Ring Val = 6
+Desired Pinky Val = 53
