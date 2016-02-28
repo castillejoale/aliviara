@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify, send_file
 import instructions
 import os.path
@@ -6,13 +7,13 @@ import os.path
 import numpy as np
 import scipy as sp
 import pandas as pd
-
+import PerformanceAnalysis
 
 import pdb
 
 
 app = Flask(__name__)
-pAnalyst = PerformanceAnalysis()
+pAnalyst = PerformanceAnalysis.PerformanceAnalysis()
 cols = ['pain', 'success', 'time', 'ex']
 
 
@@ -79,6 +80,7 @@ def data():
     print 'about to add'
     add_to_dbase("success,time,exercise",[[success, time, exercise]], 'performanceStats.csv')
     pAnalyst.checkOnPatient(exercise)
+    print 'patient checked'
     pdb.set_trace()
     prog()
     processCData(pain, fingers)
@@ -103,4 +105,3 @@ def get_image():
 
 if __name__ == '__main__':
     app.run()
-    
