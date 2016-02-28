@@ -3,6 +3,7 @@ from server import app
 import json
 import unittest
 
+
 class FlaskTestCase(unittest.TestCase):
 
     def test_correct_response(self):
@@ -16,10 +17,10 @@ class FlaskTestCase(unittest.TestCase):
         ]
         print fingers_data
         response = tester.post('/data', data=dict(
-            exercise = "ex1",
+            exercise = 0,
             fingers = fingers_data, 
             time = 666,
-            success = 1,
+            success = 0,
             pain = 1
             ), follow_redirects=True);
         self.assertEqual(response.status_code, 200)
