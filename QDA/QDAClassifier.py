@@ -4,7 +4,7 @@ import random
 from scipy.io import loadmat
 import math 
 from decimal import *
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+# from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 import csv
 import pdb
 
@@ -13,28 +13,27 @@ class QDAClassifier:
 		
 		self.labels = labels
 		self.samples = samples
-		self.fileWake = fileWake
-		means = (0,0)
-		priors = (0,0)
-		covars = (0,0) 
-		self.classifier = QuadraticDiscriminantAnalysis(self.priors)
+		self.means = (0,0)
+		self.priors = (0,0)
+		self.covars = (0,0) 
+		# self.classifier = QuadraticDiscriminantAnalysis(self.priors)
 		self.usedData = set()
 		self.ready = False
 
 
-	def computeCovariances(indices):
+	def computeCovariances(self, indices):
 		PainSamples = []
 		NoPainSamples = []
 
 		for index in indices:
-			if self.label[index] == 1:
+			if self.labels[index] == 1:
 				NoPainSamples.append(self.samples[index])
 			else:
 				PainSamples.append(self.samples[index])
 		covarPain = np.matrix(PainSamples).T
-		covarNoPain = np.pain(NoPainSamples).T
+		covarNoPain = np.matrix(NoPainSamples).T
 
-		return covarPain, covarNoPain
+		return np.cov(covarPain), np.cov(covarNoPain)
 
 
 	def computeMeans(self, indices):
@@ -65,12 +64,12 @@ class QDAClassifier:
 				priorPain += 1
 			else:
 				priorNoPain += 1
-		priorPain = priorPain/size
-		priorNoPain = priorNoPain/size
+		priorPain = float(priorPain)/float(size)
+		priorNoPain = float(priorNoPain)/float(size)
 
 		return priorPain, priorNoPain
 
-	def generateIndices(self,  samplelength ,size=59999):
+	def generateIndices(self,  samplelength ,size=10000):
 		"""
 		returns a set of randomly generated indices 
 		between 0 and |imgs| - 1 
@@ -171,32 +170,35 @@ class QDAClassifier:
 
 	def decision(self, indices):
 		self.means = self.computeMeans(indices)
-		priors = self.generateLabels(indices)
-		self.covars = self.computeCovrariances(indices)
+		self.priors = self.computPriors(indices)
+		self.covars = self.computeCovariances(indices)
 		self.ready = True
 
 	def predict(self, sample):
 		if not self.ready:
 			return None
 		estimates = []
-		for i in range(len(priors)):
+		for i in range(len(self.priors)):
 			mean = self.means[i]
 			prior = self.priors[i]
 			covar = self.covars[i]
-			det = numpy.linalg.det(covar)
-			q = self.q_c(sample, mean, covar)
-			estimate = -1/2*q_c -1/2*math.log(det) + math.log(prior)
-			estimates.append[estimate]
+			det = np.linalg.det(covar)
+			# pdb.set_trace()
+			q_est = self.q_c(sample, mean, covar)
+			estimate = -1/2*q_est -1/2*math.log(det) + math.log(prior)
+			estimates.append(float(estimate))
+		pdb.set_trace()
 		return np.argmax(estimates)
 
-	def q_c(self, mean, covar):
+	def q_c(self,sample, mean, covar):
 		invCovar = np.linalg.inv(covar)
-		(sample - mean).T*invCovar*(sample-mean) 
+		sample = np.asmatrix(sample).T
+		mean = np.asmatrix(mean).T
+		return (sample - mean).T*invCovar*(sample-mean) 
 
 
 
 
-print(row['first_name'], row['last_name'])
 
 	def saveDecisionBoundary(self):
 		"""
@@ -207,6 +209,20 @@ print(row['first_name'], row['last_name'])
 		f.write(str(self.meanPain)+','+str(self.meanNoPain)+','+str(self.priorPain)+','+str(self.priorNoPain))
 		np.save("userDistributionCovPain", self.covars[0])
 		np.save("userDistributionCovNoPain", self.covars[1])
+
+if __name__=='__main__':
+	data =[]
+	datum = [100,100,100,100,100]
+	labels = np.zeros((10000,1))
+	for i in range(10000):
+		finger = [x*random.random() for x in datum]
+		data.append(np.array(finger))
+		labels[i] = 1 if random.random() < .5 else 0
+	np.matrix(data)
+	classy = QDAClassifier(labels, data)
+	indices = classy.generateIndices(5000)
+	classy.decision(indices)
+	classy.predict([1,2,3,5,4])
 
 
 			

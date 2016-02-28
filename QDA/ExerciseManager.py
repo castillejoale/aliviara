@@ -56,11 +56,31 @@ class ExerciseManager():
 		return program
 
 
-
     def biasedFlip(p):
 		return True if random.random() < p else False
     def fitData(self):
         if self.ready:
             indices = self.QDA.generateIndices(90,100)
             self.QDA.decision(indices)
+
+    def labelPain(self, exercises, setPoint):
+        setPoint = np.array(setPoint)
+        minGrip = float('inf')
+        index = -1
+        i = 0
+        for exercise in exercises:
+            exercise = np.array(exercise)
+            dist = abs(exercise-setPoint)
+            if dist < minGrip:
+                minGrip = dist
+                index = i
+            i += 1
+        i = 0
+        for exercise in exercise:
+            if i != index:
+                exercise.append(0)
+            else:
+                exercise.append(1)
+        return exercises
+
             

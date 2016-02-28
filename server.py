@@ -14,6 +14,7 @@ from QDA import ExerciseManager
 app = Flask(__name__)
     
 pAnalyst = PerformanceAnalysis.PerformanceAnalysis()
+#trainor = ExerciseManager.ExerciseManager(exercises, None)
 cols = ['pain', 'success', 'time', 'ex']
 
 
@@ -40,8 +41,8 @@ def processCData(pain, fingers):
     for measure in fingers:
         measure = str(measure).strip('[]')
         measure = [int(d) for d in measure if d != "," and d != ' ']
-        measure.append(int(pain))
         data.append(measure)
+    #trainor.labelPain(data,specEx)
         i += 1
     add_to_dbase('finger1,finger2,finger3,finger4,finger5,pain' ,data, 'classificationData.csv')
 
