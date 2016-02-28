@@ -60,7 +60,7 @@ def add_to_dbase_dino(succ, time, ex):
 
 def write_email(e):
     fromaddr = "aliviara420@gmail.com"
-    toaddr = "tomas.vega@gmail.com"
+    toaddr = "me@tomasvega.com"
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
