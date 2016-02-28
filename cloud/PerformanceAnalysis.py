@@ -62,17 +62,21 @@ class PerformanceAnalysis:
 	    print 'email sent'
 
 	def is_consis_fail(self, e):
-	    db = check_cols(pd.read_csv(self.fileName))
-	    if float(e) not in db.ex.values:
-	        return False
-	    exer = db[db.ex == float(e)]
-	    if len(exer) < 3:
-	        return False
-	    succs = exer['success'].values
-	    last_three = [succs[-3], succs[-2], succs[-1]]
-	    if 1 in last_three:
-	        return False
-	    return True
+		print 'ehere'
+		print len(self.fileName)
+		db = check_cols(pd.read_csv(self.fileName))
+		print 'loaded'
+		if float(e) not in db.exercise.values:
+			return False
+		exer = db[db.exercise == float(e)]
+		if len(exer) < 3:
+			return False
+		succs = exer['success'].values
+		last_three = [succs[-3], succs[-2], succs[-1]]
+		if 1 in last_three:
+			return False
+		print 'askfa'
+		return True
 
 	def plot_prog(self):
 	    ex_map = {0: 'Make a Fist', 1: 'Finger Stretch', 2: 'Claw Stretch', \

@@ -53,7 +53,6 @@ class FlaskTestCase(unittest.TestCase):
     
         self.assertEqual(int(firstRow[5]), 1)
         os.remove('classificationData.csv')
-
         assert json.loads(response.data)
 
 
