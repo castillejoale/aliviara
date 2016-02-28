@@ -25,5 +25,10 @@ class FlaskTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         assert json.loads(response.data)
 
+    def test_dbQuery(self):
+        testQuery = PerformanceData.query.filter_by(ExerciseId = 'ex1').first()
+        time = testQuery.time
+        self.assertEqual(time, 666)
+
 if __name__ == '__main__':
     unittest.main()
