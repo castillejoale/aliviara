@@ -9,8 +9,8 @@ import csv
 import pdb
 
 class QDAClassifier:
-	def __init__(self, data, labels, samples):
-		self.data = data
+	def __init__(self, labels, samples):
+		
 		self.labels = labels
 		self.samples = samples
 		self.fileWake = fileWake

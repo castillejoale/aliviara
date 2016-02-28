@@ -8,9 +8,11 @@ import scipy as sp
 import pandas as pd
 import PerformanceAnalysis
 import pdb
+from QDA import ExerciseManager
 
 
 app = Flask(__name__)
+    
 pAnalyst = PerformanceAnalysis.PerformanceAnalysis()
 cols = ['pain', 'success', 'time', 'ex']
 
@@ -23,9 +25,6 @@ def hello():
 
 # Generate Plot
 
-
-
-
 # all_dat = pd.DataFram()
 # columns = 
 # for col in columns:
@@ -37,11 +36,11 @@ def add_to_all(pain, fing, ex, succ):
 def processCData(pain, fingers):
     i = 0
     data = []
-    pain = [int(d) for d in str(pain).strip('[]') if d != "," and d != ' ']
+    pain = int(pain)
     for measure in fingers:
         measure = str(measure).strip('[]')
         measure = [int(d) for d in measure if d != "," and d != ' ']
-        measure.append(int(pain[i]))
+        measure.append(int(pain))
         data.append(measure)
         i += 1
     add_to_dbase('finger1,finger2,finger3,finger4,finger5,pain' ,data, 'classificationData.csv')
@@ -81,9 +80,12 @@ def data():
    # pdb.set_trace()
 
     processCData(pain, fingers)
+    return jsonify(result={"status":200})
 
-# @app.route('/designExercise', methods=['POST']):
-# def sendExercise()
+@app.route('/plan')
+def sendExercise():
+    if not trainor.ready:
+        return jsonify([])
 
 
 
@@ -97,6 +99,7 @@ def get_image():
     # else:
     #    filename = 'error.gif'
     pAnalyst.plot_prog()
+
     return send_file('ex_progress.jpg', mimetype='image/jpg')
 
 
