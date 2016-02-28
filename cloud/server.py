@@ -65,7 +65,7 @@ def add_to_dbase(columns, data, filename):
 def data():
     params = request.form
     exercise = params['exercise']
-    fingers = params.getlist('fingers')
+    fingers = params['fingers']
     time = params['time']
     success = params['success']
     pain = params['pain']
