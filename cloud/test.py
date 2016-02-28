@@ -52,9 +52,9 @@ class FlaskTestCase(unittest.TestCase):
         self.assertEqual(header[0], 'finger1')
         firstRow = reader.next()
         self.assertEqual(int(firstRow[0]), 0)
-        pdb.set_trace()
+    
         self.assertEqual(int(firstRow[5]), 1)
-        # os.remove('classificationData.csv')
+        os.remove('classificationData.csv')
 
         assert json.loads(response.data)
 

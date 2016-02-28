@@ -6,13 +6,12 @@ import os.path
 import numpy as np
 import scipy as sp
 import pandas as pd
-
-
+import PerformanceAnalysis
 import pdb
 
 
 app = Flask(__name__)
-pAnalyst = PerformanceAnalysis()
+pAnalyst = PerformanceAnalysis.PerformanceAnalysis()
 cols = ['pain', 'success', 'time', 'ex']
 
 
@@ -78,9 +77,9 @@ def data():
     print "Pain: " + str(pain)
     print 'about to add'
     add_to_dbase("success,time,exercise",[[success, time, exercise]], 'performanceStats.csv')
-    pAnalyst.checkOnPatient(exercise)
-    pdb.set_trace()
-    prog()
+ #   pAnalyst.checkOnPatient(exercise)
+   # pdb.set_trace()
+
     processCData(pain, fingers)
 
 # @app.route('/designExercise', methods=['POST']):
