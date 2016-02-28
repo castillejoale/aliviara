@@ -119,6 +119,7 @@ def plot_prog():
         mu, sig = np.mean(calib_time), np.std(calib_time)
         thresh = mu + (2 * sig)
         if r == 4 and c == 0:
+            axarr[r, c].set_xticklabels([])
             c = 1
         axarr[r, c].axhline(y=thresh,color='k',ls='dashed')
         axarr[r, c].set_title(ex_map[ind])
