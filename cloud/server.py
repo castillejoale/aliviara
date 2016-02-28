@@ -13,8 +13,7 @@ import matplotlib.pyplot as plt
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
-
-
+from email.MIMEImage import MIMEImage
 
 app = Flask(__name__)
 
@@ -45,21 +44,22 @@ def add_to_dbase(pain, succ, time, ex):
     dbase.ix[len(t)] = [int(pain), int(succ), float(time), int(ex)]
     dbase.to_csv('dbase.csv')
 
-def write_email():
+def write_email(e):
     fromaddr = "alivaria420@gmail.com"
-    toaddr = "tomas.vega@berkeley.edu"
+    toaddr = "leonardinodigma@gmail.com"
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['To'] = toaddr
     msg['Subject'] = "alivaria"
     body = "\
-    Hello: \n\n We have been recording performance on hand exercises from Chance the Rapper. The data is suggesting that their performance on some exercises is degrading, which may be early signs of Rheumatoid Arthritis. \n\n The exercises that Chance are failing to complete at the standard of healthy controls are Exercise 1 and 2. The instructions for these tasks can be viewed below. \n \
+    Hello: \n\n We have been recording performance on hand exercises from Chance the Rapper. The data is suggesting that their performance on some exercises is degrading, which may be early signs of Rheumatoid Arthritis. \n\n The exercises that Chance are failing to complete at the standard of healthy controls is Exercise %s. The instructions for these tasks can be viewed below. \n \
     \n \
     \n \
     Best,\n \
     The Alivaria Team \n \n \n \
-    "
+    " % (e)
     msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEImage(file("final_figs/ex%s.jpg" % (str(e))).read()))
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login(fromaddr, 'password420')
@@ -69,45 +69,37 @@ def write_email():
     print 'email sent'
 
 
-
 def is_consis_fail(e):
     db = check_cols(pd.read_csv('dbase.csv'))
     if float(e) not in db.ex.values:
-        print 'returning false'
         return False
-    print 'not first'
     exer = db[db.ex == float(e)]
-    print 'exer ',  exer
     if len(exer) < 3:
-        print 'less than three'
         return False
     succs = exer['success'].values
-    print succs
     last_three = [succs[-3], succs[-2], succs[-1]]
-    print 'len: ', len(last_three)
     if 1 in last_three:
         return False
     return True
 
 # Generate Plot
-def prog():
+def plot_prog():
     ex_map = {0: 'Make a Fist', 1: 'Finger Stretch', 2: 'Claw Stretch', \
     3: 'Grip Strength', 4: 'Index Lift', 5: 'Middle Lift', \
     6: 'Ring Lift', 7: 'Pinky Lift', 8: 'Thumb Flex', \
     9: 'Index-Thumb Touch', 10: 'Middle-Thumb Touch', 11: 'Ring-Thumb Touch', \
     12: 'Pinky-Thumb Touch'}
 
-
-    calib, dbase = check_cols(pd.read_csv('dummy_calibration.csv')), check_cols(pd.read_csv('dbase.csv'))
+    calib, dbase = check_cols(pd.read_csv('dummy_calibration.csv')), check_cols(pd.read_csv('dummy_dbase.csv'))
     mu, sig = np.mean(calib['time']), np.std(calib['time'])
     thresh = mu + (2 * sig)
     f, axarr = plt.subplots(nrows=5, ncols=3)
     for ind in range(15):
-        r, c = ind / 3, ind % 3
         ex_dat = dbase[dbase.ex == ind]
-        pain_dat, comp_dat, time_dat = ex_dat['pain'], ex_dat['success'], ex_dat['time']
+        time_dat = ex_dat['time'].values
         mu_time = np.mean(time_dat)
         calib_time = calib[calib.ex == ind]['time']
+        r, c = ind / 3, ind % 3
         if ind == 13:
             axarr[r, c].set_xlabel('Trial')
             axarr[r, c].set_xticklabels([])
@@ -136,15 +128,6 @@ def prog():
     return False
 
 
-# all_dat = pd.DataFram()
-# columns = 
-# for col in columns:
-#     dbase[col] = [0.0]
-
-def add_to_all(pain, fing, ex, succ):
-    return False
-
-
 @app.route('/data', methods=['POST'])
 def data():
     params = request.form
@@ -158,12 +141,36 @@ def data():
     print "Time: " + str(time)
     print "Success: " + str(success)
     print "Pain: " + str(pain)
-    print 'about to add'
     add_to_dbase(pain, success, time, exercise)
-    # if is_consis_fail(exercise):
-    #     write_email()
-    # prog()
+    if is_consis_fail(exercise):
+        write_email(exercise)
+    # Only if 
+    plot_prog()
     return jsonify(result={"status": 200})
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('uploaded_file',
+                                    filename=filename))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+         <input type=submit value=Upload>
+    </form>
+    '''
 
 
 
