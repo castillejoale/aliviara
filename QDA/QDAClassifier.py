@@ -187,7 +187,6 @@ class QDAClassifier:
 			q_est = self.q_c(sample, mean, covar)
 			estimate = -1/2*q_est -1/2*math.log(det) + math.log(prior)
 			estimates.append(float(estimate))
-		pdb.set_trace()
 		return np.argmax(estimates)
 
 	def q_c(self,sample, mean, covar):
