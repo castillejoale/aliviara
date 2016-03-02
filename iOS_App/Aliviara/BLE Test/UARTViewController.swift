@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import Dispatch
-import SwiftHTTP
+import SwiftHTTP //Install this cocoapod
 
 
 protocol UARTViewControllerDelegate: HelpViewControllerDelegate {
@@ -32,24 +32,6 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         case HEX
     }
     
-    //Alejandro
-    var currentExercise = Exercise(type: 0)
-    //    var sessions = [NSManagedObject]()
-    var exercisesValues: NSDictionary?
-    var exercisesDescriptions: NSDictionary?
-    var exercisesTitles: NSDictionary?
-    var exerciseTimer = NSTimer()
-    var exercisePlan = [[Int]]()
-    var exerciseCounter = 0
-    var repetitionCounter = 0
-    var lastRead = [Int]()
-    var exerciseActive = false
-    let tolerance = Float(0.2)
-    let messageDelay = 3.0
-    let exerciseTime = 10.0
-    let repetitions = 3
-    
-    
     var delegate:UARTViewControllerDelegate?
     @IBOutlet var helpViewController:HelpViewController!
     @IBOutlet weak var consoleView:UITextView!
@@ -62,26 +44,10 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     @IBOutlet weak var consoleModeControl:UISegmentedControl!
     @IBOutlet var sendButton: UIButton!
     @IBOutlet var echoSwitch:UISwitch!
-    //Alejandro
-    @IBOutlet var echoLabel: UILabel!
-    @IBOutlet var exercisesButton: UIButton!
-    @IBOutlet var massageButton: UIButton!
-    @IBOutlet var exerciseView: UIView!
-    @IBOutlet var exerciseImage: UIImageView!
-    @IBOutlet var exerciseTitle: UILabel!
-    @IBOutlet var exerciseMessage: UILabel!
-    @IBOutlet var exerciseDescription: UILabel!
-    @IBOutlet var progressView1: UIProgressView!
-    @IBOutlet var progressView2: UIProgressView!
-    @IBOutlet var progressView3: UIProgressView!
-    @IBOutlet var progressView4: UIProgressView!
-    @IBOutlet var progressView5: UIProgressView!
-    @IBOutlet var progressImage: UIImageView!
     
     private var mqttBarButtonItem : UIBarButtonItem?
     private var mqttBarButtonItemImageView : UIImageView?
     private var mqttSettingsPopoverController:UIPopoverController?
-    
     private var echoLocal:Bool = false
     private var keyboardIsShown:Bool = false
     private var consoleAsciiText:NSAttributedString? = NSAttributedString(string: "")
@@ -97,6 +63,37 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
     private let unkownCharString:NSString = "�"
     private let kKeyboardAnimationDuration = 0.3
     private let notificationCommandString = "N!"
+    
+    //Alejandro
+    var currentExercise = Exercise(type: 0)
+    var exercisesValues: NSDictionary?
+    var exercisesDescriptions: NSDictionary?
+    var exercisesTitles: NSDictionary?
+    var exerciseTimer = NSTimer()
+    var exercisePlan = [[Int]]()
+    var exerciseCounter = 0
+    var repetitionCounter = 0
+    var lastRead = [Int]()
+    var exerciseActive = false
+    let tolerance = Float(0.2)
+    let messageDelay = 3.0
+    let exerciseTime = 10.0
+    let repetitions = 3
+    @IBOutlet var echoLabel: UILabel!
+    @IBOutlet var exercisesButton: UIButton!
+    @IBOutlet var massageButton: UIButton!
+    @IBOutlet var exerciseView: UIView!
+    @IBOutlet var exerciseImage: UIImageView!
+    @IBOutlet var exerciseTitle: UILabel!
+    @IBOutlet var exerciseMessage: UILabel!
+    @IBOutlet var exerciseDescription: UILabel!
+    @IBOutlet var progressView1: UIProgressView!
+    @IBOutlet var progressView2: UIProgressView!
+    @IBOutlet var progressView3: UIProgressView!
+    @IBOutlet var progressView4: UIProgressView!
+    @IBOutlet var progressView5: UIProgressView!
+    @IBOutlet var progressImage: UIImageView!
+    
     
     
     convenience init(aDelegate:UARTViewControllerDelegate){
@@ -206,33 +203,23 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         msgInputView.hidden = true
         echoLabel.hidden = true
         consoleView.hidden = true
-        
-        self.fetchExercises()
+        self.fetchExercisesData()
         self.exerciseView.hidden = true
         // Fetch exercises order
         self.fetchPlan()
-        //Initialize visualization
-        
-//        progressView1.frame =  CGRectMake(progressView1.frame.origin.x , progressView1.frame.origin.y, progressView1.frame.width*1.5, progressView1.frame.height*1.5)
-        
+        //Initialize bars visualization
         progressView1.transform = CGAffineTransformMakeRotation(CGFloat(M_PI)*(-0.5))
         progressView2.transform = CGAffineTransformMakeRotation(CGFloat(M_PI)*(-0.5))
         progressView3.transform = CGAffineTransformMakeRotation(CGFloat(M_PI)*(-0.5))
         progressView4.transform = CGAffineTransformMakeRotation(CGFloat(M_PI)*(-0.5))
         progressView5.transform = CGAffineTransformMakeRotation(CGFloat(M_PI)*(-0.5))
-        
         progressView1.progress = 0.0
         progressView2.progress = 0.0
         progressView3.progress = 0.0
         progressView4.progress = 0.0
         progressView5.progress = 0.0
-        
-        
-        
-        
 
     }
-    
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
@@ -240,13 +227,11 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
 
     }
     
-    
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
         scrollTimer?.invalidate()
     }
-    
     
     override func viewWillDisappear(animated: Bool) {
         
@@ -258,9 +243,11 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         
     }
     
-    //Alejandro
+    // MARK: Alejandro's methods start
+    
+    // MARK: Exercises methods
+    
     @IBAction func pressingExercises(sender: AnyObject) {
-        
         if exercisesButton.selected == false {
             exercisesButton.selected = true
             startExercises()
@@ -268,58 +255,34 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
             exercisesButton.selected = false
             endExercises()
         }
-        
     }
     
-    @IBAction func pressingMassage(sender: AnyObject) {
-        if massageButton.selected == false {
-            massageButton.selected = true
-            startMassage()
-        } else {
-            massageButton.selected = false
-            endMassage()
-        }
-    }
-    
-    func startMassage() {
-        vibrate("StartMassage")
-    }
-    
-    func endMassage() {
-        vibrate("EndMassage")
+    @IBAction func reportPain(sender: AnyObject) {
+        print("Reporting pain at exercise: " + String(currentExercise.type))
+        currentExercise.pain = true
+        endExercise()
     }
     
     func startExercises() {
-
         print("Starting exercises")
+        //Show exercise view
         self.exerciseView.hidden = false
-        
+        //End massage if there was one
         endMassage()
-        
-//        print(exercisePlan[0][0])
+        //Start first exercise on the plan
         self.startExercise(Int(exercisePlan[0][0]))
-        
-
     }
     
     func startExercise(type: Int) {
-        
         print("starting exercise " + String(type))
+        //Set up first exercise
         currentExercise = Exercise(type: type)
-        
-        let barHeight = Float(0.0)
-        progressView1.setProgress(barHeight,animated: true)
-        progressView2.setProgress(barHeight,animated: true)
-        progressView3.setProgress(barHeight,animated: true)
-        progressView4.setProgress(barHeight,animated: true)
-        progressView5.setProgress(barHeight,animated: true)
-        
         exerciseActive = true
-        
+        exerciseCounter++
+        repetitionCounter++
         exerciseMessage.text = "Start exercise"
         print("Instructions: " + self.exerciseMessage.text!)
         print(NSDate())
-
         //Set image
         if let filePath = NSBundle.mainBundle().pathForResource("ex" + String(type), ofType: "jpg"), image = UIImage(contentsOfFile: filePath) {
             exerciseImage.contentMode = .ScaleAspectFit
@@ -327,29 +290,23 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         } else {
             print("error getting exercise image")
         }
-
-        exerciseCounter++
-        repetitionCounter++
-        
         //Get exercise key
         let string = "New item - " + "\(type + 1)"
-        
         //Set descriptions
         let description = exercisesDescriptions![string]
         exerciseDescription!.text = description as? String
-
         //Set titles
         let title = exercisesTitles![string]
         exerciseTitle!.text = title as? String
-
+        //Set initial visualization
+        let barHeight = Float(0.0)
+        progressView1.setProgress(barHeight,animated: true)
+        progressView2.setProgress(barHeight,animated: true)
+        progressView3.setProgress(barHeight,animated: true)
+        progressView4.setProgress(barHeight,animated: true)
+        progressView5.setProgress(barHeight,animated: true)
         //Set exercise timer
-        exerciseTimer = NSTimer.scheduledTimerWithTimeInterval(exerciseTime, target: self, selector: "terminateTimer", userInfo: nil, repeats: false)
-        
-    }
-    
-    func terminateTimer() {
-        print("terminateTimer")
-        endExercise()
+        exerciseTimer = NSTimer.scheduledTimerWithTimeInterval(exerciseTime, target: self, selector: "endExerciseTimer", userInfo: nil, repeats: false)
     }
     
     func relax() {
@@ -357,75 +314,28 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         exerciseMessage.text = "Relax"
         print("Instructions: " + self.exerciseMessage.text!)
         print(NSDate())
-        
+        //Reset visualization
         let barHeight = Float(0.0)
         progressView1.setProgress(barHeight,animated: true)
         progressView2.setProgress(barHeight,animated: true)
         progressView3.setProgress(barHeight,animated: true)
         progressView4.setProgress(barHeight,animated: true)
         progressView5.setProgress(barHeight,animated: true)
-        
-        
-        
+        //Parallel Delay
         let delay = messageDelay * Double(NSEC_PER_SEC)
         let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
         dispatch_after(time, dispatch_get_main_queue()) {
             print("NOW LETS CONTINUE")
             self.continueExercises()
-            
-            
-            
         }
     }
-    
-    func endExercise() {
-        print("ending exercise")
-        
-        //Initialize last read
-        lastRead = [Int]()
-        lastRead.append(-100)
-        lastRead.append(-100)
-        lastRead.append(-100)
-        lastRead.append(-100)
-        lastRead.append(-100)
-        
-        exerciseActive = false
-        
-        exerciseTimer.invalidate()
-        
-        let now = NSDate()
-        currentExercise.endDate = now
-        
-        // Send exercise data
-        self.sendCurrentExerciseData()
-        
-        //Check if exercise was succesful
-        
-        if currentExercise.success == true {
-            if self.repetitionCounter >= self.repetitions {
-                vibrate("Success")
-//                barHeight = Float(1.0)
-            }
-            
-        } else {
-
-            vibrate("Failure")
-        }
-        
-        relax()
-
-    }
-    
-    
     
     func continueExercises() {
-        
         if exerciseCounter < exercisePlan.count {
-            
             print("Continuing exercises")
             if currentExercise.success {
-                print(repetitionCounter)
-                print(repetitions)
+//                print(repetitionCounter)
+//                print(repetitions)
                 if repetitionCounter >= repetitions{
                     nextExercise()
                 } else {
@@ -434,17 +344,10 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
             } else {
                 nextExercise()
             }
-            
         } else {
             print("contratulations, you have ended today's exercises")
             endExercises()
         }
-        
-        
-        
-        
-        
-        
     }
     
     func repeatExercise() {
@@ -452,37 +355,10 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         exerciseMessage.text = "Lets repeat"
         print("Instructions: " + self.exerciseMessage.text!)
         print(NSDate())
-        
         //Set exercise timer
         exerciseTimer = NSTimer.scheduledTimerWithTimeInterval(exerciseTime, target: self, selector: "endExercise", userInfo: nil, repeats: false)
-        
         exerciseActive = true
         repetitionCounter++
-        
-    }
-    
-    func vibrate(type: String) {
-        
-        print("Vibrating because of: " + type)
-        
-        var commandType:NSString = ""
-        
-        if type == "Success"{
-            commandType = "s"
-        } else if type == "Failure"{
-            commandType = "f"
-        } else if type == "StartMassage"{
-            commandType = "mon"
-        } else if type == "EndMassage"{
-            commandType = "moff"
-        }
-
-
-        
-        if commandType != ""{
-            sendUartMessage(commandType, wasReceivedFromMqtt: false)
-        }
-        
     }
     
     func nextExercise() {
@@ -490,48 +366,70 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         print("Next exercise")
         repetitionCounter = 0
         self.startExercise(exercisePlan[exerciseCounter][0])
-
     }
     
+    func endExercise() {
+        print("ending exercise")
+        //Initialize last read
+        lastRead = [Int]()
+        lastRead.append(-100)
+        lastRead.append(-100)
+        lastRead.append(-100)
+        lastRead.append(-100)
+        lastRead.append(-100)
+        //Reset
+        exerciseActive = false
+        exerciseTimer.invalidate()
+        //Set endDate for current exercise
+        let now = NSDate()
+        currentExercise.endDate = now
+        // Send exercise data
+        self.sendCurrentExerciseData()
+        //Check if exercise was succesful
+        if currentExercise.success == true {
+            if self.repetitionCounter >= self.repetitions {
+                vibrate("Success")
+            }
+        } else {
+            vibrate("Failure")
+        }
+        //Go to relax mode
+        relax()
+    }
     
     func endExercises() {
         print("Ending exercises")
+        //Hide exercise view
         self.exerciseView.hidden = true
+        //Reset
         exerciseCounter = 0
         exerciseTimer.invalidate()
     }
     
+    func endExerciseTimer() {
+        print("endExerciseTimer")
+        endExercise()
+    }
+    
+    //TODO: Send what repetion number was the exercise
     func sendCurrentExerciseData() {
-        
         let interval = Int(currentExercise.endDate.timeIntervalSinceDate(currentExercise.startDate))
-        
-//        print("Sending the following exercise data")
-//        print("Exercise number?")
-//        print(currentExercise.type)
-//        print("Succeeded?")
-//        print(currentExercise.success)
-//        print("Reported pain?")
-//        print(currentExercise.pain)
-//        print("Seconds it took?")
-//        print(interval)
-        
-        //Alejandro
         print("POST")
-        
+        //Process sensor data, turning it into a string
         let stringArray = currentExercise.sensorData.description
-        
+        //Process success data
         var successInt = 0
         if currentExercise.success{
             successInt = 1
         }
-        
+        //Process pain data
         var painInt = 0
         if currentExercise.pain{
             painInt = 1
         }
-        
+        //Combine all data
         let params:Dictionary<String,AnyObject> = ["exercise": currentExercise.type, "fingers":stringArray,"time": interval,"success": successInt,"pain": painInt]
-        
+        //CMake psot request
         do {
             let opt = try HTTP.POST("https://3d1606ea.ngrok.io/data", parameters: params)
             opt.start { response in
@@ -545,80 +443,78 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         } catch let error {
             print("got an error creating the request: \(error)")
         }
-        
-        
     }
     
-    func fetchExercises() {
-        print("fetching exercises")
-
+    func updateVisualization() {
+        //Checker
+        if exerciseView.hidden == true {
+            return
+        }
+        print("updating visualization")
+        //Get exercise key
+        let string = "New item - " + "\(currentExercise.type + 1)"
+        //Get exercisesValues
+        let valuesString = exercisesValues![string]!
+        let valuesArray = valuesString.componentsSeparatedByString(" ")
+        var intValues = [Int]()
+        for i in 0...valuesArray.count-1 {
+            intValues.append(Int(valuesArray[i])!)
+        }
+        //Update visualization
+        let progress1 = min(Float(1 - abs(Float(lastRead[0] - intValues[0])/100.0)) + tolerance,1)
+        let progress2 = min(Float(1 - abs(Float(lastRead[1] - intValues[1])/100.0)) + tolerance,1)
+        let progress3 = min(Float(1 - abs(Float(lastRead[2] - intValues[2])/100.0)) + tolerance,1)
+        let progress4 = min(Float(1 - abs(Float(lastRead[3] - intValues[3])/100.0)) + tolerance,1)
+        let progress5 = min(Float(1 - abs(Float(lastRead[4] - intValues[4])/100.0)) + tolerance,1)
+        progressView1.setProgress(progress1,animated: true)
+        progressView2.setProgress(progress2,animated: true)
+        progressView3.setProgress(progress3,animated: true)
+        progressView4.setProgress(progress4,animated: true)
+        progressView5.setProgress(progress5,animated: true)
+    }
+    
+    //TODO: Fetch plan never got connected
+    //We are currently adding the default plan
+    func fetchPlan() {
+        print("GET")
+//        do {
+//            let opt = try HTTP.GET("https://3d1606ea.ngrok.io/get_plan")
+//            opt.start { response in
+//                if let err = response.error {
+//                    print("error: \(err.localizedDescription)")
+//                    self.addDefaultPlan()
+//                    return //also notify app of failure as needed
+//                } else{
+//                    //                    let plan = response.data
+//                    //                    print(plan)
+//                    
+//                }
+//                //                print("opt finished: \(response.description)")
+//                //                print("data is: \(response.data)") access the response of the data with response.data
+//            }
+//        } catch let error {
+//            print("got an error creating the request: \(error)")
+//            addDefaultPlan()
+//        }
+        addDefaultPlan()
+        print("Exercise plan:")
+        print(exercisePlan)
+    }
+    
+    func fetchExercisesData() {
+        print("fetching exercises data")
         //Get values
-        
         if let path = NSBundle.mainBundle().pathForResource("exercisesValues", ofType: "plist") {
             exercisesValues = NSDictionary(contentsOfFile: path)
         }
-//        if let dict = exercisesValues {
-//            // Use your dict here
-//            print(dict)
-//        }
-
         //Get descriptions
-        
         if let path = NSBundle.mainBundle().pathForResource("exercisesDescriptions", ofType: "plist") {
             exercisesDescriptions = NSDictionary(contentsOfFile: path)
         }
-//        if let dict = exercisesDescriptions {
-//            // Use your dict here
-//            print(dict)
-//            print(dict["New item - 1"]!)
-//        }
-
-        
         //Get titles
-        
         if let path = NSBundle.mainBundle().pathForResource("exercisesTitles", ofType: "plist") {
             exercisesTitles = NSDictionary(contentsOfFile: path)
         }
-//        if let dict = exercisesTitles {
-//            // Use your dict here
-//            print(dict)
-//        }
-        
-    }
-    
-    func fetchPlan() {
-
-        print("GET")
-        do {
-            let opt = try HTTP.GET("https://3d1606ea.ngrok.io/get_plan")
-            opt.start { response in
-                if let err = response.error {
-                    print("error: \(err.localizedDescription)")
-                    self.addDefaultPlan()
-                    return //also notify app of failure as needed
-                } else{
-                    
-                    ////                    print(response.data)
-                    //                    let image: UIImage = UIImage(data: response.data)!
-                    //                    self.progressImage.image = image
-                    
-                    
-                    let plan = response.data
-//                    print(plan)
-
-                }
-//                print("opt finished: \(response.description)")
-                //print("data is: \(response.data)") access the response of the data with response.data
-            }
-        } catch let error {
-            print("got an error creating the request: \(error)")
-            addDefaultPlan()
-        }
-        
-        addDefaultPlan()
-
-        print("Exercise plan:")
-        print(exercisePlan)
     }
     
     func addDefaultPlan() {
@@ -638,44 +534,8 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
 //        exercisePlan.append([9,0])
     }
     
-    func updateVisualization() {
-        
-        if exerciseView.hidden == true {
-            return
-        }
-        
-        print("updating visualization")
-        
-        //Get exercise key
-        let string = "New item - " + "\(currentExercise.type + 1)"
-        
-        //Set descriptions
-        let valuesString = exercisesValues![string]!
-        let valuesArray = valuesString.componentsSeparatedByString(" ")
-        
-        var intValues = [Int]()
-        for i in 0...valuesArray.count-1 {
-            intValues.append(Int(valuesArray[i])!)
-        }
-        
-        let progress1 = min(Float(1 - abs(Float(lastRead[0] - intValues[0])/100.0)) + tolerance,1)
-        let progress2 = min(Float(1 - abs(Float(lastRead[1] - intValues[1])/100.0)) + tolerance,1)
-        let progress3 = min(Float(1 - abs(Float(lastRead[2] - intValues[2])/100.0)) + tolerance,1)
-        let progress4 = min(Float(1 - abs(Float(lastRead[3] - intValues[3])/100.0)) + tolerance,1)
-        let progress5 = min(Float(1 - abs(Float(lastRead[4] - intValues[4])/100.0)) + tolerance,1)
-        
-
-        progressView1.setProgress(progress1,animated: true)
-        progressView2.setProgress(progress2,animated: true)
-        progressView3.setProgress(progress3,animated: true)
-        progressView4.setProgress(progress4,animated: true)
-        progressView5.setProgress(progress5,animated: true)
-
-    }
-    
     func checkIfExerciseSucceeded() {
         let totalSum = progressView1.progress + progressView2.progress + progressView3.progress + progressView4.progress + progressView5.progress
-        
         if totalSum == 5 {
             print("Success")
             currentExercise.success = true
@@ -685,13 +545,28 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         }
     }
     
-    
-    @IBAction func reportPain(sender: AnyObject) {
-        print("Reporting pain at exercise: " + String(currentExercise.type))
-        currentExercise.pain = true
-        endExercise()
+    // MARK: Massage methods
+    @IBAction func pressingMassage(sender: AnyObject) {
+        if massageButton.selected == false {
+            massageButton.selected = true
+            startMassage()
+        } else {
+            massageButton.selected = false
+            endMassage()
+        }
     }
-
+    
+    func startMassage() {
+        //Send StartMassage command to the BLE board
+        vibrate("StartMassage")
+    }
+    
+    func endMassage() {
+        //Send EndMassage command to the BLE board
+        vibrate("EndMassage")
+    }
+    
+    // MARK: View progress methods
     @IBAction func viewProgress(sender: AnyObject) {
         print("Viewing progress")
         print("GET")
@@ -702,28 +577,45 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                     print("error: \(err.localizedDescription)")
                     return //also notify app of failure as needed
                 } else{
-                    
-////                    print(response.data)
-//                    let image: UIImage = UIImage(data: response.data)!
-//                    self.progressImage.image = image
-                    
-                    
+                    ////                    print(response.data)
+                    //                    let image: UIImage = UIImage(data: response.data)!
+                    //                    self.progressImage.image = image
                     let getImage =  UIImage(data: response.data)
-//                    print(getImage!.size)
+                    //                    print(getImage!.size)
                     self.progressImage.image = getImage
-
-                    
-                    
                 }
-//                print("opt finished: \(response.description)")
+                //                print("opt finished: \(response.description)")
                 //print("data is: \(response.data)") access the response of the data with response.data
             }
         } catch let error {
             print("got an error creating the request: \(error)")
         }
     }
+
+    // MARK: Shared methods
+    func vibrate(type: String) {
+        print("Vibrating because of: " + type)
+        //Process command
+        var commandType:NSString = ""
+        if type == "Success"{
+            commandType = "s"
+        } else if type == "Failure"{
+            commandType = "f"
+        } else if type == "StartMassage"{
+            commandType = "mon"
+        } else if type == "EndMassage"{
+            commandType = "moff"
+        }
+        //Checker
+        if commandType != ""{
+            sendUartMessage(commandType, wasReceivedFromMqtt: false)
+        }
+    }
     
+    // MARK: Alejandro's methods end
     
+    // MARK: Alejandro's modified methods start
+
     func updateConsoleWithIncomingData(newData:NSData) {
         
         //Alejandro
@@ -747,15 +639,13 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                 
             }
         }
-        
-        
         let newString = NSString(bytes: &data, length: dataLength, encoding: NSUTF8StringEncoding)
+        
         //Alejandro
 //        print(newString!)
         var array = newString!.componentsSeparatedByString(" ")
         var indexArray = [Int]()
         var removeCounter = 0
-
         if array.count > 0 {
             for i in 0...array.count-1 {
                 if array[i] == "" {
@@ -763,46 +653,93 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
                 }
             }
         }
-
         if indexArray.count > 0 {
             for j in 0...indexArray.count-1 {
                 array.removeAtIndex(indexArray[j] - removeCounter)
                 removeCounter++
             }
         }
-
         if array.count == 5{
-            
             lastRead = [Int]()
-            
             for i in 0...array.count-1 {
                 lastRead.append(Int(array[i])!)
             }
-            
             //FLIP ARRAY
             lastRead = lastRead.reverse()
-            
 //            print("We got all data points")
 //            print(lastRead)
             updateVisualization()
             checkIfExerciseSucceeded()
-            
             //Add data points
             currentExercise.sensorData.append(lastRead)
-            
-
         }
 //            printLog(self, funcName: "updateConsoleWithIncomingData", logString: newString! as String)
-
-        
-        
-
     }
     
+    @IBAction func sendMessage(sender:AnyObject){
+        
+        //        sendButton.enabled = false
+        
+        //        if (inputField.text == ""){
+        //            return
+        //        }
+        //        let newString:NSString = inputField.text
+        
+        //Alejandro
+        //        if (inputTextView.text == ""){
+        //            return
+        //        }
+        //        let newString:NSString = inputTextView.text
+        let newString:NSString = "Hola!"
+        sendUartMessage(newString, wasReceivedFromMqtt: false)
+        //        inputField.text = ""
+        inputTextView.text = ""
+    }
     
-
+    // MARK: Alejandro's modified methods end
     
+    func sendUartMessage(message: NSString, wasReceivedFromMqtt: Bool) {
+        // MQTT publish to TX
+        let mqttSettings = MqttSettings.sharedInstance
+        if(mqttSettings.isPublishEnabled) {
+            if let topic = mqttSettings.getPublishTopic(MqttSettings.PublishFeed.TX.rawValue) {
+                let qos = mqttSettings.getPublishQos(MqttSettings.PublishFeed.TX.rawValue)
+                MqttManager.sharedInstance.publish(message as String, topic: topic, qos: qos)
+            }
+        }
+        
+        // Send to uart
+        if (!wasReceivedFromMqtt || mqttSettings.subscribeBehaviour == .Transmit) {
+            let data = NSData(bytes: message.UTF8String, length: message.length)
+            delegate?.sendData(data)
+        }
+        
+    }
     
+    func receiveData(newData : NSData){
+        
+        if (isViewLoaded() && view.window != nil) {
+            // MQTT publish to RX
+            let mqttSettings = MqttSettings.sharedInstance
+            if(mqttSettings.isPublishEnabled) {
+                if let message = NSString(data: newData, encoding: NSUTF8StringEncoding) {
+                    if let topic = mqttSettings.getPublishTopic(MqttSettings.PublishFeed.RX.rawValue) {
+                        let qos = mqttSettings.getPublishQos(MqttSettings.PublishFeed.RX.rawValue)
+                        MqttManager.sharedInstance.publish(message as String, topic: topic, qos: qos)
+                    }
+                }
+            }
+            
+            // Update UI
+            updateConsoleWithIncomingData(newData)
+        }
+        
+    }
+    
+    func didConnect(){
+        
+        
+    }
 
     @IBAction func clearConsole(sender : AnyObject) {
         
@@ -827,56 +764,8 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         }
         
     }
-    
-    
-    @IBAction func sendMessage(sender:AnyObject){
-        
-//        sendButton.enabled = false
-        
-//        if (inputField.text == ""){
-//            return
-//        }
-//        let newString:NSString = inputField.text
-        
-        //Alejandro
-//        if (inputTextView.text == ""){
-//            return
-//        }
-//        let newString:NSString = inputTextView.text
-        let newString:NSString = "Hola!"
-        
-        
-     
-        sendUartMessage(newString, wasReceivedFromMqtt: false)
-        
-//        inputField.text = ""
-        inputTextView.text = ""
-        
-      
-        
-    }
-    
-    
-    
-    func sendUartMessage(message: NSString, wasReceivedFromMqtt: Bool) {
-        // MQTT publish to TX
-        let mqttSettings = MqttSettings.sharedInstance
-        if(mqttSettings.isPublishEnabled) {
-            if let topic = mqttSettings.getPublishTopic(MqttSettings.PublishFeed.TX.rawValue) {
-                let qos = mqttSettings.getPublishQos(MqttSettings.PublishFeed.TX.rawValue)
-                MqttManager.sharedInstance.publish(message as String, topic: topic, qos: qos)
-            }
-        }
-        
-        // Send to uart
-        if (!wasReceivedFromMqtt || mqttSettings.subscribeBehaviour == .Transmit) {
-            let data = NSData(bytes: message.UTF8String, length: message.length)
-            delegate?.sendData(data)
-        }
-        
-    }
-    
-    
+
+
     @IBAction func echoSwitchValueChanged(sender:UISwitch) {
         
         let boo = sender.on
@@ -884,28 +773,6 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         echoLocal = boo
         
     }
-    
-    
-    func receiveData(newData : NSData){
-        
-        if (isViewLoaded() && view.window != nil) {
-            // MQTT publish to RX
-            let mqttSettings = MqttSettings.sharedInstance
-            if(mqttSettings.isPublishEnabled) {
-                if let message = NSString(data: newData, encoding: NSUTF8StringEncoding) {
-                    if let topic = mqttSettings.getPublishTopic(MqttSettings.PublishFeed.RX.rawValue) {
-                        let qos = mqttSettings.getPublishQos(MqttSettings.PublishFeed.RX.rawValue)
-                        MqttManager.sharedInstance.publish(message as String, topic: topic, qos: qos)
-                    }
-                }
-            }
-            
-            // Update UI
-            updateConsoleWithIncomingData(newData)
-        }
-        
-    }
-    
     
     func keyboardWillHide(sender : NSNotification) {
         
@@ -1030,13 +897,7 @@ class UARTViewController: UIViewController, UITextFieldDelegate, UITextViewDeleg
         
     }
     
-    
-    func didConnect(){
-    
-        
-    }
-    
-    
+
     func sendNotification(msgString:String) {
         
         let note = UILocalNotification()

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '7A515F1B401E6EDCCE166BAA'
+               BlueprintIdentifier = '5F2E2641AD7C5A78F89C976F'
                BlueprintName = 'Moscapsule'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'Moscapsule.framework'>

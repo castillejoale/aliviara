@@ -150,7 +150,7 @@
                     <color key="textColor" red="0.09803922474" green="0.58039218189999997" blue="0.98039221759999995" alpha="1" colorSpace="deviceRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HcF-Ow-uZw">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HcF-Ow-uZw" userLabel="Official view">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uD6-ca-Wsc">
@@ -267,7 +267,7 @@
                                         </mask>
                                     </variation>
                                 </imageView>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="klb-DE-3UB">
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="klb-DE-3UB" userLabel="Visualization">
                                     <rect key="frame" x="0.0" y="188" width="375" height="150"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="hMZ-jf-RcV">
